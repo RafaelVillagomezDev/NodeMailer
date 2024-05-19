@@ -1,0 +1,31 @@
+{
+  "name": "nodemailer",
+  "version": "1.0.0",
+  "description": "NodeMailer proyect para enviar email desde formulario",
+  "main": "app.js",
+  "scripts": {
+    
+    "devstart": "cross-env NODE_ENV=development nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RafaelVillagomezDev/NodeMailer.git"
+  },
+  "keywords": [],
+  "author": "Yandry Villagomez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RafaelVillagomezDev/NodeMailer/issues"
+  },
+  "homepage": "https://github.com/RafaelVillagomezDev/NodeMailer#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "nodemailer": "^6.9.13"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5"
+  }
+}
