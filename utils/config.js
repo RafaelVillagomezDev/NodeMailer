@@ -11,8 +11,8 @@ module.exports={
     API: data.parsed.ROOT_API,
     EMAIL:data.parsed.GMAIL_EMAIL,
     PASSWORD:data.parsed.GMAIL_PASSWORD,
-    CLIENT_ID:data.GMAIL_CLIENT_ID,
-    CLIENT_SECRET:data.GMAIL_CLIENT_SECRET,
-    TOKEN:data.GMAIL_TOKEN
+    CLIENT_ID:data.parsed.GMAIL_CLIENT_ID,
+    CLIENT_SECRET:data.parsed.GMAIL_CLIENT_SECRET,
+    TOKEN:data.parsed.GMAIL_TOKEN
 
 }
