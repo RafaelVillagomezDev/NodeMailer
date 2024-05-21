@@ -4,7 +4,8 @@
   "description": "NodeMailer proyect para enviar email desde formulario",
   "main": "app.js",
   "scripts": {
-    "devstart": "cross-env NODE_ENV=development nodemon app.js"
+    "devstart": "cross-env NODE_ENV=development nodemon app.js",
+    "build":"cross-env NODE-ENV=production "
   },
   "repository": {
     "type": "git",
