@@ -1,4 +1,5 @@
-const env=require("dotenv").configDotenv()
+const env=require("dotenv").configDotenv();
+const nodemailer=require("nodemailer")
 const { validationResult, matchedData } = require("express-validator");
 
 const sendMail = async (req, res, next) => {
