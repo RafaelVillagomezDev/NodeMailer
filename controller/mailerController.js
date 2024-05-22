@@ -1,5 +1,4 @@
-const nodemailer = require("nodemailer");
-const env = require("../utils/config");
+const env=require("dotenv").configDotenv()
 const { validationResult, matchedData } = require("express-validator");
 
 const sendMail = async (req, res, next) => {
@@ -24,8 +23,8 @@ const sendMail = async (req, res, next) => {
       secure: true,
       auth: {
         // type: 'OAuth2',
-        user: env.EMAIL, // your email address
-        pass: env.PASSWORD, // your password
+        user:env.parsed.EMAIL, // your email address
+        pass:env.parsed.PASSWORD, // your password
         // clientId: env.CLIENT_ID,
         // clientSecret: env.CLIENT_SECRET,
         // refreshToken: env.TOKEN
@@ -34,8 +33,8 @@ const sendMail = async (req, res, next) => {
     let transporter = nodemailer.createTransport(config);
   
     let message = {
-      from: env.EMAIL, // sender address
-      to: env.EMAIL, // list of receivers
+      from:env.parsed.EMAIL, // sender address
+      to: env.parsed.EMAIL, // list of receivers
       sender:email,
       subject: subject, // Subject line
       html: `<p>${messague}</p>
