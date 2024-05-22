@@ -2,7 +2,7 @@ const path=require("path")
 
 const data=require("dotenv").config(
     {
-        path:path.resolve(__dirname,`../environments/.env.${process.env.NODE_ENV}`)
+        path:path.resolve(__dirname,`../.env.${process.env.NODE_ENV}`)
     }
 )
 
