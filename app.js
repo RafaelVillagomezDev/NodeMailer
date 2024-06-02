@@ -9,5 +9,6 @@ const port = env.parsed.PORT
 const nodeMailerRoutes = require("./routes/v1/SendMail");
 app.use(`/api/v1/`, nodeMailerRoutes);
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+   console.log(`Server listening on port ${port}`);
+  console.log(`API is accessible at http://yandrydev.es:${port}/api/v1/`);  
 });
