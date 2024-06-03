@@ -4,7 +4,7 @@
   "description": "NodeMailer proyect para enviar email desde formulario",
   "main": "app.js",
   "scripts": {
-    "devstart": "pm2 start  app.js",
+    "start": "pm2 start  app.js",
     "build": "pm2 start app.js"
   },
   "repository": {

@@ -20,5 +20,5 @@ COPY . .
 
 # Exponer el puerto
 EXPOSE 3000
-# Ejecuta Nginx en primer plano
-CMD ["npm","devstart"]
+
+CMD [ "npm","run","start"]
