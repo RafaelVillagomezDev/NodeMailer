@@ -18,11 +18,7 @@ RUN npm install
 # Copia los archivos de la aplicación
 COPY . .
 
-# Construye la aplicación
-RUN npm run build
-
-
 # Exponer el puerto
-EXPOSE 80
+EXPOSE 3000
 # Ejecuta Nginx en primer plano
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm","devstart"]
