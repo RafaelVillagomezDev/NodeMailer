@@ -2,7 +2,7 @@ const express = require("express");
 const env=require("dotenv").configDotenv()
 const bodyParser = require("body-parser");
 const app = express();
-
+const cors = require('cors');
 
 const whitelist = ['http://yandrydev.es', 'https://yandrydev.es'];
 
