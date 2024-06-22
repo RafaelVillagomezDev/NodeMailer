@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const cors = require('cors');
 
-const whitelist = ['http://yandrydev.es', 'https://yandrydev.es',"http://localhost:3000"];
+const whitelist = ['http://yandrydev.es', 'https://yandrydev.es'];
 
 const corsOptions = {
   origin: function (origin, callback) {
