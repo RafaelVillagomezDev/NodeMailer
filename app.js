@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const cors = require('cors');
 
-const whitelist = ['http://yandrydev.es', 'https://yandrydev.es'];
+const whitelist = ['http://yandrydev.es', 'https://yandrydev.es',"http://localhost:3000"];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -28,5 +28,5 @@ const nodeMailerRoutes = require("./routes/v1/SendMail");
 app.use(`/api/v1/`, nodeMailerRoutes);
 app.listen(port, () => {
    console.log(`Server listening on port ${port}`);
-  console.log(`API is accessible at http://yandrydev.es:${port}/api/v1/`);  
+  
 });

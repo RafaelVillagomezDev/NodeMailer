@@ -2,7 +2,7 @@ const CryptoJS = require('crypto-js');
 const env=require("dotenv").configDotenv();
 
 const secretKeyEnv= env.parsed.PASSWORD_REQUEST
-
+const passwordDecrypt=env.parsed.PASSWORD_DECRYPT
 // Middleware para cifrar los encabezados y el cuerpo
 const authMiddleware = (req, res, next) => {
     const { headers, body } = req;
@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
     const secretKey = secretKeyEnv; // Obtener la clave secreta del entorno
     const secretKeyHeader=req.headers["secret-key"]
 
-    if (secretKey!=secretKeyHeader) {
+    if (secretKey!=secretKeyHeader ) {
       return res.status(401).json({ error: 'No tienes autorizacion Api' });
     }
 
@@ -20,14 +20,14 @@ const authMiddleware = (req, res, next) => {
 
     // Cifrar los encabezados
     const encabezadoOriginal = JSON.stringify(headers);
-    const encabezadoCifrado = CryptoJS.AES.encrypt(encabezadoOriginal, secretKey, { iv: randomWord }).toString();
+    const encabezadoCifrado = CryptoJS.AES.encrypt(encabezadoOriginal, passwordDecrypt, { iv: randomWord }).toString();
   
     // Establecer el encabezado cifrado en la solicitud
     req.headers['secret-key'] = encabezadoCifrado;
   
     // Cifrar el cuerpo
     const cuerpoOriginal = JSON.stringify(body);
-    const cuerpoCifrado = CryptoJS.AES.encrypt(cuerpoOriginal, secretKey, { iv: randomWord }).toString();
+    const cuerpoCifrado = CryptoJS.AES.encrypt(cuerpoOriginal, passwordDecrypt, { iv: randomWord }).toString();
   
     // Establecer el cuerpo cifrado en la solicitud
     req.body = cuerpoCifrado;
@@ -53,16 +53,16 @@ const decryptAuthMiddleware = (req, res, next) => {
 
     try {
       // Descifrar los encabezados
-      const bytesEncabezado = CryptoJS.AES.decrypt(encabezadoCifrado, secretKey);
+      const bytesEncabezado = CryptoJS.AES.decrypt(encabezadoCifrado, passwordDecrypt);
       const encabezadoDescifrado = JSON.parse(bytesEncabezado.toString(CryptoJS.enc.Utf8));
-      if (secretKey!=encabezadoDescifrado) {
+      if (secretKey!=encabezadoDescifrado["secret-key"]) {
         return res.status(401).json({ error: 'No tienes autorizacion' });
       }
       // Establecer los encabezados descifrados en la solicitud
       req.headers = encabezadoDescifrado;
   
       // Descifrar el cuerpo
-      const bytesCuerpo = CryptoJS.AES.decrypt(cuerpoCifrado, secretKey);
+      const bytesCuerpo = CryptoJS.AES.decrypt(cuerpoCifrado, passwordDecrypt);
       const cuerpoDescifrado = JSON.parse(bytesCuerpo.toString(CryptoJS.enc.Utf8));
   
       // Establecer el cuerpo descifrado en la solicitud
