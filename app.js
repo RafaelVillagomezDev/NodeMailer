@@ -2,6 +2,24 @@ const express = require("express");
 const env=require("dotenv").configDotenv()
 const bodyParser = require("body-parser");
 const app = express();
+
+
+const whitelist = ['http://yandrydev.es', 'https://yandrydev.es'];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+
+// Habilitar CORS para todos los orígenes
+app.use(cors(corsOptions));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
