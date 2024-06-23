@@ -3,49 +3,35 @@ const nodemailer=require("nodemailer")
 const { validationResult, matchedData } = require("express-validator");
 
 const sendMail = async (req, res, next) => {
-
-
   try {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(422).json({ errors: errors.array() });
-      return;
-    }
-
-    req = matchedData(req); //Saneo
-
-    const dataBody = { ...req};
-    const {email,subject,messague} = dataBody;
+   
+    const dataBody = req.body; 
+    const { email, subject, messague } = dataBody;
 
     let config = {
-      host: "smtp.gmail.com", // your email domain
+      host: "smtp.gmail.com", // tu dominio de email
       port: 465,
       secure: true,
       auth: {
-        // type: 'OAuth2',
-        user:env.parsed.EMAIL, // your email address
-        pass:env.parsed.PASSWORD, // your password
-        // clientId: env.CLIENT_ID,
-        // clientSecret: env.CLIENT_SECRET,
-        // refreshToken: env.TOKEN
+        user: process.env.EMAIL, // tu dirección de correo electrónico
+        pass: process.env.PASSWORD, // tu contraseña
       },
     };
+
     let transporter = nodemailer.createTransport(config);
-  
+
     let message = {
-      from:env.parsed.EMAIL, // sender address
-      to: env.parsed.EMAIL, // list of receivers
-      sender:email,
-      subject: subject, // Subject line
+      from: process.env.EMAIL, // dirección del remitente
+      to: process.env.EMAIL, // lista de destinatarios
+      sender: email,
+      subject: subject, // línea de asunto
       html: `<p>${messague}</p>
-            <p>Remitente: ${email}</p>`, // html body
-    }; 
- 
-   
+            <p>Remitente: ${email}</p>`, // cuerpo del correo en html
+    };
+
     const info = await transporter.sendMail(message);
     res.status(201).json({
-      msg: "Email sent",
+      msg: "Correo enviado",
       info: info.messageId,
       preview: nodemailer.getTestMessageUrl(info),
     });
