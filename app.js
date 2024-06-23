@@ -9,7 +9,7 @@ const whitelist = ['http://yandrydev.es', 'https://yandrydev.es'];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || whitelist.includes(origin)) {
+    if (whitelist.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Acceso no permitido por CORS'));
@@ -24,8 +24,8 @@ app.use(cors(corsOptions));
 
 // Middleware de Rate Limit
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 3, // límite máximo de 2 solicitudes por IP
+  windowMs: 10 *60*1000, // 15 minutos
+  max: 10, // límite máximo de 2 solicitudes por IP
   message: { message: 'Has excedido el límite de peticiones. Inténtalo de nuevo más tarde.' }, 
   statusCode: 429, 
   headers: true, 
