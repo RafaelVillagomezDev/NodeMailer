@@ -1,80 +1,63 @@
-const CryptoJS = require('crypto-js');
-const env=require("dotenv").configDotenv();
+const CryptoJS = require("crypto-js");
+const env = require("dotenv").configDotenv();
+const jwt = require("jsonwebtoken");
+const { validationResult, matchedData } = require("express-validator");
 
-const secretKeyEnv= env.parsed.PASSWORD_REQUEST
-const passwordDecrypt=env.parsed.PASSWORD_DECRYPT
+const secretKeyEnv = env.parsed.PASSWORD_REQUEST;
+
 // Middleware para cifrar los encabezados y el cuerpo
-const authMiddleware = (req, res, next) => {
-    const { headers, body } = req;
-    
-    // Verificar la clave secreta
-    const secretKey = secretKeyEnv; // Obtener la clave secreta del entorno
-    const secretKeyHeader=req.headers["secret-key"]
-
-    if (secretKey!=secretKeyHeader ) {
-      return res.status(401).json({ error: 'No tienes autorizacion Api' });
+const generateToken = (req, res, next) => {
+  try {
+    const dataBody = { ...req.body };
+    const { email, subject, messague } = dataBody;
+    // Validar que todos los campos están presentes
+    if (!email || !subject || !messague) {
+      return res.status(400).json({ messague: "Faltan campos en el envio" });
     }
 
-    // Generar una clave aleatoria para el cifrado
-    const randomWord = CryptoJS.lib.WordArray.random(16);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
 
-    // Cifrar los encabezados
-    const encabezadoOriginal = JSON.stringify(headers);
-    const encabezadoCifrado = CryptoJS.AES.encrypt(encabezadoOriginal, passwordDecrypt, { iv: randomWord }).toString();
-  
-    // Establecer el encabezado cifrado en la solicitud
-    req.headers['secret-key'] = encabezadoCifrado;
-  
-    // Cifrar el cuerpo
-    const cuerpoOriginal = JSON.stringify(body);
-    const cuerpoCifrado = CryptoJS.AES.encrypt(cuerpoOriginal, passwordDecrypt, { iv: randomWord }).toString();
-  
-    // Establecer el cuerpo cifrado en la solicitud
-    req.body = cuerpoCifrado;
-  
+    req = matchedData(req); //Saneo
+
+    const payload = {
+      email: email,
+      subject: subject,
+      messague: messague,
+    };
+
+    // Generar el token
+    const token = jwt.sign(payload, secretKeyEnv, { expiresIn: "1h" });
+
+    // Enviar el token al cliente
+    res.json({ token: token });
     next();
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
 };
-
 
 // Middleware para descifrar los encabezados y el cuerpo de la solicitud
-const decryptAuthMiddleware = (req, res, next) => {
-    const encabezadoCifrado = req.headers['secret-key'];
-    const cuerpoCifrado = req.body;
-  
-    // Verificar si los encabezados cifrados o el cuerpo cifrado están presentes
-    if (!encabezadoCifrado || !cuerpoCifrado) {
-      return res.status(400).json({ error: 'Encabezados o cuerpo cifrados no encontrados en la solicitud' });
+const verifyToken = (req, res, next) => {
+  // Obtener el token del header 'secret-key'
+  const token = req.headers['secret-key'];
+
+  // Verificar si existe el token
+  if (!token) {
+    return res.status(401).json({ message: 'Acceso denegado. Token no proporcionado.' });
+  }
+
+  // Verificar el token JWT
+  jwt.verify(token, secretKeyEnv, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: 'Token inválido o expirado.' });
     }
-  
-    // Verificar la clave secreta
-    const secretKey = secretKeyEnv; // Obtener la clave secreta del entorno
-
-
-
-    try {
-      // Descifrar los encabezados
-      const bytesEncabezado = CryptoJS.AES.decrypt(encabezadoCifrado, passwordDecrypt);
-      const encabezadoDescifrado = JSON.parse(bytesEncabezado.toString(CryptoJS.enc.Utf8));
-      if (secretKey!=encabezadoDescifrado["secret-key"]) {
-        return res.status(401).json({ error: 'No tienes autorizacion' });
-      }
-      // Establecer los encabezados descifrados en la solicitud
-      req.headers = encabezadoDescifrado;
-  
-      // Descifrar el cuerpo
-      const bytesCuerpo = CryptoJS.AES.decrypt(cuerpoCifrado, passwordDecrypt);
-      const cuerpoDescifrado = JSON.parse(bytesCuerpo.toString(CryptoJS.enc.Utf8));
-  
-      // Establecer el cuerpo descifrado en la solicitud
-      req.body = cuerpoDescifrado;
-  
-      next();
-    } catch (error) {
-      // Manejar el error de descifrado
-      return res.status(400).json({ error: 'Error al descifrar los datos cifrados' });
-    }
+    // Si el token es válido, puedes almacenar la información decodificada en el objeto 'req' para su uso posterior
+    req.body = decoded;
+    next(); // Continuar con la ejecución de las siguientes funciones middleware o rutas
+  });
 };
 
-  
- module.exports ={authMiddleware,decryptAuthMiddleware};
-  
+module.exports = { generateToken, verifyToken };
